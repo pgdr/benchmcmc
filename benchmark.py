@@ -14,14 +14,14 @@ def _mu_sig(data):
     return mu, sigma
 
 
-def _set_up(data1, data2):
-    mu1, sigma1 = _mu_sig(data1)
-    mu2, sigma2 = _mu_sig(data2)
-    benchmark = list(data1) + list(data2)
-    length = np.arange(len(benchmark))
+def _set_up(benchmark, beta=False):
+    N = len(benchmark)
+    length = np.arange(N)
 
-    logging.warning(f"Normal(N={len(data1)}, mu={mu1}, sigma={sigma1})")
-    logging.warning(f"Normal(N={len(data2)}, mu={mu2}, sigma={sigma2})")
+    mu1, sigma1 = _mu_sig(benchmark[: N // 3])
+    mu2, sigma2 = _mu_sig(benchmark[2 * (N // 3) :])
+    print(f"Prior: Normal(N={N//2}, mu={mu1}, sigma={sigma1})")
+    print(f"Prior: Normal(N={N//2}, mu={mu2}, sigma={sigma2})")
 
     with pm.Model() as benchmark_model:
         switchpoint = pm.DiscreteUniform("switchpoint", lower=0, upper=len(length))
@@ -34,12 +34,11 @@ def _set_up(data1, data2):
 
 def _run_model(model):
     with model:
-        trace = pm.sample(draws=SAMPLES, tune=TUNE)
-    return trace
+        return pm.sample(draws=SAMPLES, tune=TUNE)
 
 
-def run_benchmark(data1, data2):
-    model, variables = _set_up(data1, data2)
+def run_benchmark(data):
+    model, variables = _set_up(data)
     trace = _run_model(model)
 
     with model:
@@ -51,11 +50,9 @@ def run_benchmark(data1, data2):
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) != 3:
-        sys.exit("Usage: benchmark.py bench1 bench2")
+    if len(sys.argv) != 2:
+        sys.exit("Usage: benchmark.py benchfile")
 
     with open(sys.argv[1], "r") as fin:
-        data1 = [float(x) for x in fin.readlines()]
-    with open(sys.argv[2], "r") as fin:
-        data2 = [float(x) for x in fin.readlines()]
-    run_benchmark(data1, data2)
+        data = [float(x) for x in fin.readlines()]
+    run_benchmark(data)
