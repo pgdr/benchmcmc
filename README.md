@@ -44,3 +44,19 @@ that the performance went from ~13.5 to 12.25 at or around the 69th
 datapoint.
 
 ![traceplot](https://raw.githubusercontent.com/pgdr/benchmcmc/main/assets/benchmcmc.png)
+
+
+---
+
+In the repository, there is also a script `mkbench` for generating
+synthetic benchmark data.
+
+```bash
+$ python mkbench.py 100 15 3 100 14 3 [--beta] > benchmarkfile.txt
+```
+
+This generates 200 samples, 100 from `N(mu=15, sigma=3)` followed by 100
+from `N(mu=14, sigma=3)`.
+
+If you use `--beta`, you get a bit more realistic performance with a
+_lower bound_ of mu.
