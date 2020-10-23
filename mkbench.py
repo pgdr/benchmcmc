@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 
+import os
 import random
 
 
 def generate(n, mu, sigma):
+    beta = os.getenv("BETA")
     for i in range(n):
-        yield random.gauss(mu, sigma)
+        if beta:
+            yield mu + sigma * random.betavariate(2, 5)  # good enough
+        else:
+            yield random.gauss(mu, sigma)
 
 
 def main():
