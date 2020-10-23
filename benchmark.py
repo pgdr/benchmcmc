@@ -1,11 +1,6 @@
 import statistics
 import pymc3 as pm
 import matplotlib.pyplot as plt
-import logging
-import numpy as np
-
-SAMPLES = 20 * 1000
-TUNE = 5 * 1000
 
 
 def _mu_sig(data):
@@ -16,7 +11,7 @@ def _mu_sig(data):
 
 def _set_up(benchmark, beta=False):
     N = len(benchmark)
-    length = np.arange(N)
+    length = list(range(N))
 
     mu1, sigma1 = _mu_sig(benchmark[: N // 3])
     mu2, sigma2 = _mu_sig(benchmark[2 * (N // 3) :])
@@ -32,14 +27,14 @@ def _set_up(benchmark, beta=False):
     return benchmark_model, ["benchmark_1", "benchmark_2", "switchpoint"]
 
 
-def _run_model(model):
+def _run_model(model, draws=None, tune=None):
     with model:
-        return pm.sample(draws=SAMPLES, tune=TUNE)
+        return pm.sample(draws=draws, tune=tune)
 
 
-def run_benchmark(data):
+def run_benchmark(data, draws=None, tune=None):
     model, variables = _set_up(data)
-    trace = _run_model(model)
+    trace = _run_model(model, draws, tune)
 
     with model:
         pm.traceplot(trace, variables)
@@ -47,12 +42,28 @@ def run_benchmark(data):
     plt.show()
 
 
+def _get_args(lst, args):
+    ret = {}
+    for a in args:
+        if f"--{a}" in lst:
+            idx = sys.argv.index(f"--{a}")
+            ret[a] = int(sys.argv[idx + 1])
+            del lst[idx]
+            del lst[idx]
+    ddargs = [f"--{e}" for e in args]
+    return ret, [elt for elt in lst if elt not in ddargs]
+
+
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) != 2:
-        sys.exit("Usage: benchmark.py benchfile")
+    cfg, args = _get_args(sys.argv, ["draws", "tune"])
+    draws = cfg.get("draws")
+    tune = cfg.get("tune")
 
-    with open(sys.argv[1], "r") as fin:
+    if len(args) != 2:
+        sys.exit("Usage: benchmark.py benchfile [--draws nd] [--tune nt]")
+
+    with open(args[1], "r") as fin:
         data = [float(x) for x in fin.readlines()]
-    run_benchmark(data)
+    run_benchmark(data, draws=draws, tune=tune)
