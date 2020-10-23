@@ -33,7 +33,7 @@ is, e.g. in requests per second or in seconds, or other measures
 
 (or visualized)
 
-![scatterplot of performance over time](https://raw.githubusercontent.com/pgdr/benchmcmc/master/assets/benchscatter.png)
+![scatterplot of performance over time](https://raw.githubusercontent.com/pgdr/benchmcmc/main/assets/benchscatter.png)
 
 Suppose that you wonder whether or not the performance at the start and
 at the end are likely to be from two different distributions, and if so,
@@ -43,4 +43,4 @@ Running MCMC on the data gives this plot which shows that it is likely
 that the performance went from ~13.5 to 12.25 at or around the 69th
 datapoint.
 
-![traceplot](https://raw.githubusercontent.com/pgdr/benchmcmc/master/assets/benchmcmc.png)
+![traceplot](https://raw.githubusercontent.com/pgdr/benchmcmc/main/assets/benchmcmc.png)
