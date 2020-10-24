@@ -15,10 +15,14 @@ def _set_up(benchmark, beta=False):
     N = len(benchmark)
     length = list(range(N))
 
-    mu1, sigma1 = _mu_sig(benchmark[: N // 3])
-    mu2, sigma2 = _mu_sig(benchmark[2 * (N // 3) :])
-    print(f"Prior: Normal(N={N//2}, mu={mu1}, sigma={sigma1})")
-    print(f"Prior: Normal(N={N//2}, mu={mu2}, sigma={sigma2})")
+    sample_N = min(30, N//3)
+    if sample_N < 10:
+        sample_N = N//2
+
+    mu1, sigma1 = _mu_sig(benchmark[: sample_N])
+    mu2, sigma2 = _mu_sig(benchmark[(N-sample_N):])
+    print(f"Prior: Normal(N={sample_N}, mu={mu1}, sigma={sigma1})")
+    print(f"Prior: Normal(N={sample_N}, mu={mu2}, sigma={sigma2})")
 
     with pm.Model() as benchmark_model:
         switchpoint = pm.DiscreteUniform("switchpoint", lower=0, upper=len(length))
