@@ -1,6 +1,2 @@
-from .benchmark import run_benchmark
+from .benchmark import main
 from .mkbench import main as benchmk
-
-
-def main():
-    pass

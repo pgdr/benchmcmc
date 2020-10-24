@@ -5,7 +5,5 @@ setuptools.setup(
     packages=["benchmcmc"],
     version="0.0.0",
     install_requires=["matplotlib", "pymc3"],
-    entry_points={
-        "console_scripts": ["benchmcmc=benchmcmc:main", "benchmk=benchmcmc:benchmk"]
-    },
+    entry_points={"console_scripts": ["benchmcmc=benchmcmc:main"]},
 )
