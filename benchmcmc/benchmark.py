@@ -30,6 +30,11 @@ def _set_up(benchmark, beta=False):
 
 
 def _run_model(model, draws=None, tune=None):
+    if not draws:
+        draws = 1000
+    if not tune:
+        tune = 1000
+
     with model:
         return pm.sample(draws=draws, tune=tune)
 
