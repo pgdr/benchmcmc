@@ -61,8 +61,17 @@ def _get_args(lst, args):
     return ret, [elt for elt in lst if elt not in ddargs]
 
 
-if __name__ == "__main__":
-    import sys
+def main():
+    if "--help" in sys.argv or "-h" in sys.argv:
+        print("Reads a file of numbers, one number per file.")
+        print("Use --generate to create synthetic data")
+        sys.exit()
+
+    if "--generate" in sys.argv:
+        from .mkbench import main as mkbench
+
+        mkbench(args=[a for a in sys.argv if a != "--generate"])
+        sys.exit()
 
     cfg, args = _get_args(sys.argv, ["draws", "tune"])
     draws = cfg.get("draws")
@@ -70,7 +79,10 @@ if __name__ == "__main__":
 
     if len(args) != 2:
         sys.exit("Usage: benchmark.py benchfile [--draws nd] [--tune nt]")
-
     with open(args[1], "r") as fin:
         data = [float(x) for x in fin.readlines()]
     run_benchmark(data, draws=draws, tune=tune)
+
+
+if __name__ == "__main__":
+    main()

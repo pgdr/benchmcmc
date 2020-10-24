@@ -21,16 +21,18 @@ def generate(n, mu, sigma, beta=False):
             yield random.gauss(mu, sigma)
 
 
-def main():
+def main(args=None):
     import sys
+    if args is None:
+        args = sys.argv
 
-    beta = "--beta" in sys.argv
-    args = [a for a in sys.argv if a != "--beta"]
+    beta = "--beta" in args
+    args = [a for a in args if a != "--beta"]
 
     if len(args) != 7:
         sys.exit("Usage: mkbench n1 mu1 sig1 n2 mu2 sig2 [--beta]")
     n1, m1, s1, n2, m2, s2 = [float(e) for e in args[1:]]
-    for e in generate(round(n1), m1, s2, beta=beta):
+    for e in generate(round(n1), m1, s1, beta=beta):
         print(e)
     for e in generate(round(n2), m2, s2, beta=beta):
         print(e)
