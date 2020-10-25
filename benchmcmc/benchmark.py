@@ -15,12 +15,12 @@ def _set_up(benchmark, beta=False):
     N = len(benchmark)
     length = list(range(N))
 
-    sample_N = min(30, N//3)
+    sample_N = min(30, N // 3)
     if sample_N < 10:
-        sample_N = N//2
+        sample_N = N // 2
 
-    mu1, sigma1 = _mu_sig(benchmark[: sample_N])
-    mu2, sigma2 = _mu_sig(benchmark[(N-sample_N):])
+    mu1, sigma1 = _mu_sig(benchmark[:sample_N])
+    mu2, sigma2 = _mu_sig(benchmark[(N - sample_N) :])
     print(f"Prior: Normal(N={sample_N}, mu={mu1}, sigma={sigma1})")
     print(f"Prior: Normal(N={sample_N}, mu={mu2}, sigma={sigma2})")
 
@@ -33,19 +33,22 @@ def _set_up(benchmark, beta=False):
     return benchmark_model, ["benchmark_1", "benchmark_2", "switchpoint"]
 
 
-def _run_model(model, draws=None, tune=None):
-    if not draws:
-        draws = 1000
-    if not tune:
-        tune = 1000
+def _run_model(model, draws=None, tune=None, target_accept=None):
+    kwargs = {}
+    if draws:
+        kwargs["draws"] = draws
+    if tune:
+        kwargs["tune"] = tune
+    if target_accept:
+        kwargs["nuts"] = {"target_accept": target_accept}
 
     with model:
-        return pm.sample(draws=draws, tune=tune)
+        return pm.sample(**kwargs)
 
 
-def run_benchmark(data, draws=None, tune=None):
+def run_benchmark(data, **kwargs):
     model, variables = _set_up(data)
-    trace = _run_model(model, draws, tune)
+    trace = _run_model(model, **kwargs)
 
     with model:
         pm.traceplot(trace, variables)
@@ -58,7 +61,12 @@ def _get_args(lst, args):
     for a in args:
         if f"--{a}" in lst:
             idx = sys.argv.index(f"--{a}")
-            ret[a] = int(sys.argv[idx + 1])
+            try:
+                ret[a] = sys.argv[idx + 1]
+                ret[a] = float(ret[a])
+                ret[a] = int(sys.argv[idx + 1])
+            except ValueError:
+                pass
             del lst[idx]
             del lst[idx]
     ddargs = [f"--{e}" for e in args]
@@ -77,15 +85,18 @@ def main():
         mkbench(args=[a for a in sys.argv if a != "--generate"])
         sys.exit()
 
-    cfg, args = _get_args(sys.argv, ["draws", "tune"])
+    cfg, args = _get_args(sys.argv, ["draws", "tune", "target-accept"])
     draws = cfg.get("draws")
     tune = cfg.get("tune")
+    target_accept = cfg.get("target-accept")
 
     if len(args) != 2:
-        sys.exit("Usage: benchmark.py benchfile [--draws nd] [--tune nt]")
+        sys.exit(
+            "Usage: benchmark.py benchfile [--draws nd] [--tune nt] [--target-accept [0..1]]"
+        )
     with open(args[1], "r") as fin:
         data = [float(x) for x in fin.readlines()]
-    run_benchmark(data, draws=draws, tune=tune)
+    run_benchmark(data, draws=draws, tune=tune, target_accept=target_accept)
 
 
 if __name__ == "__main__":
