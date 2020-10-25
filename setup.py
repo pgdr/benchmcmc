@@ -1,3 +1,4 @@
+import os
 import setuptools
 
 __pgdr = "PG Drange <pgdr@equinor.com>"
@@ -25,7 +26,7 @@ def readme():
 
 setuptools.setup(
     name="benchmcmc",
-    version="0.0.2",
+    version="0.0.3",
     packages=["benchmcmc"],
     description=__description,
     long_description=readme(),
