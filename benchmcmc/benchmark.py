@@ -11,7 +11,7 @@ def _mu_sig(data):
     return mu, sigma
 
 
-def _set_up(benchmark, beta=False):
+def _set_up(benchmark):
     N = len(benchmark)
     length = list(range(N))
 
@@ -29,7 +29,7 @@ def _set_up(benchmark, beta=False):
         benchmark_1 = pm.Normal("benchmark_1", mu=mu1, sigma=sigma1)
         benchmark_2 = pm.Normal("benchmark_2", mu=mu2, sigma=sigma2)
         rate = pm.math.switch(switchpoint >= length, benchmark_1, benchmark_2)
-        benchmark_distribution = pm.Normal("benchmarks", rate, observed=benchmark)
+        _ = pm.Normal("benchmarks", rate, observed=benchmark)
     return benchmark_model, ["benchmark_1", "benchmark_2", "switchpoint"]
 
 

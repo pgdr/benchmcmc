@@ -30,9 +30,8 @@ there at one point was a change in performance.
 Suppose that you run your benchmark tests on every commit that you have
 (e.g. looping over `git-rev-list`),
 and you see that your performance data
-is, e.g. in requests per second or in seconds, or other measures.  (In
-this data, it starts being centered around 13+ε or so, and it ends being
-centered around 12+ε or so.)
+is (e.g. in requests per second or in seconds, or other measures)
+as follows:
 
 ```
 13.64
@@ -58,7 +57,9 @@ centered around 12+ε or so.)
 12.19
 ```
 
-(or visualized)
+In this data, it seems to be centered around 13+ε in the beginning,
+and it ends
+being centered around 12+ε, or visualized:
 
 ![scatterplot of performance over time](https://raw.githubusercontent.com/pgdr/benchmcmc/main/assets/benchscatter.png)
 
@@ -74,7 +75,7 @@ where the _switchpoint_ was.
 ## Analysis
 
 Running `benchmcmc` on the data gives the above plot which shows that it
-is likely that the performance went from ~13.5 to 12.25 at or around the
+is likely that the performance went from ~13.5 to ~12.25 at or around the
 69th or 75th datapoints.
 
 This helps you pin down when a performance change might have occurred.
@@ -88,14 +89,14 @@ You can run `benchmcmc --generate` for generating synthetic benchmark
 data.
 
 ```bash
-$ python mkbench.py 100 15 3 100 14 3 [--beta] > benchmarkfile.txt
+$ benchmcmc --generate 100 15 3 100 14 3 [--beta] > benchmarkfile.txt
 ```
 
 This generates 200 samples, 100 from `N(mu=15, sigma=3)` followed by 100
 from `N(mu=14, sigma=3)`.
 
 If you use `--beta`, you get a bit more realistic performance with a
-_lower bound_ of mu.
+_lower bound_ of `mu`, especially for lower values of `mu`.
 
 
 ## Running a script on a history

@@ -10,11 +10,12 @@ from N(mu=14, sigma=3).
 
 """
 
+import sys
 import random
 
 
 def generate(n, mu, sigma, beta=False):
-    for i in range(n):
+    for _ in range(n):
         if beta:
             yield mu + sigma * random.betavariate(2, 5)  # good enough
         else:
@@ -22,7 +23,6 @@ def generate(n, mu, sigma, beta=False):
 
 
 def main(args=None):
-    import sys
     if args is None:
         args = sys.argv
 
