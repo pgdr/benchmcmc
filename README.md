@@ -21,6 +21,9 @@ benchmcmc --generate 69 11 10 131 10 9 --beta > bench.txt
 benchmcmc bench.txt
 ```
 
+The first command generates 200 synthetic data points and put them into
+`bench.txt`, and the second command runs `benchmcmc` on the data,
+displaying a _trace plot_ of the MCMC.
 
 ## Introduction
 
@@ -79,6 +82,32 @@ is likely that the performance went from ~13.5 to ~12.25 at or around the
 69th or 75th datapoints.
 
 This helps you pin down when a performance change might have occurred.
+
+
+## Usage
+
+```
+$ benchmcmc bench.txt --draws 1000 --tune 1000 --cores 4 --target-accept 0.8
+```
+
+The options available are those illustrated in the above examples and
+all taken from and fed into
+[`pymc3.sampling.sample`](https://docs.pymc.io/api/inference.html).
+
+* `draws` — The number of samples to draw. Defaults to 1000. The number
+  of tuned samples are discarded by default.
+* `tune` — Number of iterations to tune, defaults to 1000. Samplers
+  adjust the step sizes, scalings or similar during tuning. Tuning
+  samples will be drawn in addition to the number specified in the draws
+  argument, and will be discarded.
+* `cores` — The number of _chains_ to run in parallel.  If `None`, set
+  to the number of CPUs in the system, but at most 4.
+* `target_accept` : float in [0, 1] — The step size is tuned such that
+  we approximate this acceptance rate. Higher values like 0.9 or 0.95
+  often work better for problematic posteriors.
+
+
+
 
 
 ---

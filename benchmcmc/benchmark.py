@@ -33,12 +33,14 @@ def _set_up(benchmark):
     return benchmark_model, ["benchmark_1", "benchmark_2", "switchpoint"]
 
 
-def _run_model(model, draws=None, tune=None, target_accept=None):
+def _run_model(model, draws=None, tune=None, cores=None, target_accept=None):
     kwargs = {}
     if draws:
         kwargs["draws"] = draws
     if tune:
         kwargs["tune"] = tune
+    if cores:
+        kwargs["cores"] = cores
     if target_accept:
         kwargs["nuts"] = {"target_accept": target_accept}
 
@@ -85,18 +87,21 @@ def main():
         mkbench(args=[a for a in sys.argv if a != "--generate"])
         sys.exit()
 
-    cfg, args = _get_args(sys.argv, ["draws", "tune", "target-accept"])
+    cfg, args = _get_args(sys.argv, ["draws", "tune", "cores", "target-accept"])
     draws = cfg.get("draws")
     tune = cfg.get("tune")
+    cores = cfg.get("cores")
     target_accept = cfg.get("target-accept")
 
     if len(args) != 2:
         sys.exit(
-            "Usage: benchmark.py benchfile [--draws nd] [--tune nt] [--target-accept [0..1]]"
+            "Usage: benchmark.py benchfile [--draws nd] [--tune nt] [--target-accept [0..1]] [--cores nc]"
         )
     with open(args[1], "r") as fin:
         data = [float(x) for x in fin.readlines()]
-    run_benchmark(data, draws=draws, tune=tune, target_accept=target_accept)
+    run_benchmark(
+        data, draws=draws, tune=tune, cores=cores, target_accept=target_accept
+    )
 
 
 if __name__ == "__main__":
