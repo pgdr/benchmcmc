@@ -1,4 +1,5 @@
 import sys
+import os.path
 import statistics
 
 import pymc3 as pm
@@ -97,7 +98,12 @@ def main():
         sys.exit(
             "Usage: benchmark.py benchfile [--draws nd] [--tune nt] [--target-accept [0..1]] [--cores nc]"
         )
-    with open(args[1], "r") as fin:
+
+    fname = args[1]
+    if not os.path.isfile(fname):
+        sys.exit(f"No such file {fname}")
+
+    with open(fname, "r") as fin:
         data = [float(x) for x in fin.readlines()]
     run_benchmark(
         data, draws=draws, tune=tune, cores=cores, target_accept=target_accept
