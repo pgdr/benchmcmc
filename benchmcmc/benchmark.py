@@ -14,7 +14,7 @@ def _mu_sig(data):
 
 def _set_up(benchmark):
     N = len(benchmark)
-    length = list(range(N))
+    length = list(range(1, N + 1))  # make histogram 1-indexed (more natural)
 
     sample_N = min(30, N // 3)
     if sample_N < 10:
