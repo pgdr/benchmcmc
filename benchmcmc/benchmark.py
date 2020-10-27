@@ -54,11 +54,12 @@ def run_benchmark(data, **kwargs):
     trace = _run_model(model, **kwargs)
 
     with model:
-        est = pm.find_MAP()
-        sw, b1, b2 = trace["switchpoint"], est["benchmark_1"], est["benchmark_2"]
-        print(f"Switchpoint ~ {statistics.mode(sw)}")
-        print(f"Benchmark 1 ~ {b1.round(2)}")
-        print(f"Benchmark 2 ~ {b2.round(2)}")
+        print(f"\n\n\n{' summary '.center(20, '=')}\n")
+        sw, b1, b2 = trace["switchpoint"], trace["benchmark_1"], trace["benchmark_2"]
+        print(f"Switchpoint ~ {round(statistics.mean(sw))}")
+        print(f"Benchmark 1 ~ {round(statistics.mean(b1), 2)}")
+        print(f"Benchmark 2 ~ {round(statistics.mean(b2), 2)}")
+        print()
         print(pm.summary(trace))
 
     with model:

@@ -26,7 +26,7 @@ def readme():
 
 setuptools.setup(
     name="benchmcmc",
-    version="0.0.5",
+    version="0.0.6",
     packages=["benchmcmc"],
     description=__description,
     long_description=readme(),
