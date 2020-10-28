@@ -178,3 +178,23 @@ b456714,0.07
 8002774,0.07
 e1f5f9f,0.09
 ```
+
+
+---
+
+For example, you can create a script `gitrun` that looks as follows:
+
+```bash
+#!/usr/bin/bash
+
+GITRUN_EXEC=$1
+shift
+GITRUN_ARGS=$@
+
+for commit in $(git rev-list master)
+do
+  git checkout --quiet $commit
+  printf "%s," "`(git rev-parse --short HEAD)`"
+  sh -c "$GITRUN_EXEC $GITRUN_ARGS"
+done
+```
