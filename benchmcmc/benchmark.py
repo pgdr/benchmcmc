@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def _mu_sig(data):
-    mu = round(statistics.fmean(data), 2)
+    mu = round(statistics.mean(data), 2)
     sigma = max(round(statistics.stdev(data) * 2, 1), 0.1)
     return mu, sigma
 
